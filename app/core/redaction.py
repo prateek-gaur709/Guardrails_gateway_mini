@@ -13,7 +13,12 @@ after the precise formats (card/SSN/IP) have already been claimed and labelled.
 """
 import re
 
-EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+# Bounded local-part ({0,63}) and domain labels ({1,63}) with \b anchors so the
+# pattern is linear (no ReDoS) on adversarial input; sizes follow RFC limits.
+EMAIL_RE = re.compile(
+    r"\b[A-Za-z0-9][A-Za-z0-9._%+\-]{0,63}"
+    r"@[A-Za-z0-9\-]{1,63}(?:\.[A-Za-z0-9\-]{1,63})*\.[A-Za-z]{2,}\b"
+)
 
 # Credit card: 13-19 contiguous digits, or the standard 4x4 grouping with single
 # space/dash separators. Keeping the grouping tight (rather than "digits with

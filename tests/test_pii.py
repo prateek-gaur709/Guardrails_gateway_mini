@@ -1,3 +1,5 @@
+import time
+
 from app.core.redaction import redact_pii
 
 
@@ -123,3 +125,12 @@ def test_pii_does_not_redact_short_numbers():
         redacted, evidence = redact_pii(text)
         assert "[REDACTED_PHONE]" not in redacted, text
         assert evidence == [], text
+
+
+def test_email_regex_is_redos_resistant():
+    # Adversarial 10 KB "email bomb" must complete well under 50 ms (no ReDoS).
+    bomb = "a" * 5000 + "@" + "b" * 5000
+    start = time.perf_counter()
+    redact_pii(bomb)
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    assert elapsed_ms < 50, f"redact_pii took {elapsed_ms:.1f} ms on 10 KB input"
