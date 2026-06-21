@@ -10,7 +10,15 @@ from app.schemas import AnalyzeRequest, AnalyzeResponse
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("sentraguard")
 
-app = FastAPI(title="SentraGuard Lite", version="1")
+# OpenAPI/docs surfaces are disabled to keep exactly the two specified routes
+# reachable and to avoid leaking the API schema (/openapi.json, /docs, /redoc).
+app = FastAPI(
+    title="SentraGuard Lite",
+    version="1",
+    openapi_url=None,
+    docs_url=None,
+    redoc_url=None,
+)
 
 
 @app.post("/analyze", response_model=AnalyzeResponse)
@@ -18,7 +26,7 @@ def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     docs = [doc.model_dump() for doc in request.context_docs]
     result = run_analysis(request.prompt, docs)
     # Safe logging: metadata only, never raw prompt/PII.
-    request_id = request.metadata.request_id if request.metadata else "n/a"
+    request_id = request.metadata.request_id
     logger.info(
         "analyze request_id=%s decision=%s score=%s tags=%s docs=%s",
         request_id,
