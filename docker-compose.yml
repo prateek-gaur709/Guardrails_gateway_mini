@@ -5,6 +5,11 @@ services:
       dockerfile: Dockerfile.api
     ports:
       - "8000:8000"
+    restart: unless-stopped
+    environment:
+      # Override decision thresholds without code changes (defaults 80 / 40).
+      - BLOCK_SCORE=80
+      - TRANSFORM_SCORE=40
   ui:
     build:
       context: .
@@ -13,5 +18,6 @@ services:
       - API_BASE_URL=http://api:8000
     ports:
       - "8501:8501"
+    restart: unless-stopped
     depends_on:
       - api
