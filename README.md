@@ -7,6 +7,13 @@ outputs**, and human-readable **reasons**.
 
 This simulates a simplified real-time input/output guardrails & firewalling component.
 
+## 🌐 Live demo
+
+- **UI:** https://sentraguard-ui-wrlj.onrender.com
+- **API:** https://sentraguard-api-u8rv.onrender.com  ([`/policy`](https://sentraguard-api-u8rv.onrender.com/policy) · [`/docs`](https://sentraguard-api-u8rv.onrender.com/docs))
+
+> Hosted on Render's free tier — services sleep after ~15 min idle, so the **first request may take 30–60s** to wake. Just retry. (`GET /` returns 404 by design; the only routes are `/analyze` and `/policy`.)
+
 ## What it does
 
 Three heuristic detectors run on every request:
