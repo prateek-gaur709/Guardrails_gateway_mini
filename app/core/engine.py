@@ -60,6 +60,13 @@ def analyze(prompt: str, context_docs: list[dict]) -> dict:
     risk_score = min(100, sum(TAG_WEIGHTS[t] for t in tags))
     decision = _decision_for(risk_score)
 
+    # A blocked request must be opaque: never echo the (even PII-redacted)
+    # attack content back to a downstream consumer. The reasons still explain
+    # why it was blocked.
+    if decision == "block":
+        sanitized_prompt = "[BLOCKED]"
+        sanitized_docs = []
+
     return {
         "decision": decision,
         "risk_score": risk_score,
