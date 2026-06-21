@@ -5,7 +5,19 @@ import os
 import requests
 import streamlit as st
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
+def _api_base_url() -> str:
+    """Resolve API_BASE_URL, defaulting the scheme to https:// when absent.
+
+    Hosts like Render expose another service's address without a scheme
+    (e.g. ``sentraguard-api.onrender.com``); prepend https:// so requests work.
+    """
+    url = os.environ.get("API_BASE_URL", "http://localhost:8000").rstrip("/")
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    return url
+
+
+API_BASE_URL = _api_base_url()
 
 st.set_page_config(page_title="SentraGuard Lite", page_icon="🛡️", layout="centered")
 

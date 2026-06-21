@@ -1,18 +1,26 @@
+# Render Blueprint — deploys the API and UI as two Docker web services.
+# In the Render dashboard: New → Blueprint → pick this repo → Apply.
 services:
   - type: web
     name: sentraguard-api
     runtime: docker
     dockerfilePath: ./Dockerfile.api
+    dockerContext: .
     plan: free
+    healthCheckPath: /policy
 
   - type: web
     name: sentraguard-ui
     runtime: docker
     dockerfilePath: ./Dockerfile.ui
+    dockerContext: .
     plan: free
     envVars:
+      # Render fills this with the API service's hostname (no scheme); the UI
+      # prepends https:// automatically. If the UI can't reach the API, set this
+      # manually to the API's public URL (https://<api>.onrender.com).
       - key: API_BASE_URL
         fromService:
           type: web
           name: sentraguard-api
-          property: hostport
+          property: host

@@ -8,7 +8,15 @@ import sys
 
 import requests
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
+def _api_base_url() -> str:
+    """Resolve API_BASE_URL, defaulting the scheme to https:// when absent."""
+    url = os.environ.get("API_BASE_URL", "http://localhost:8000").rstrip("/")
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    return url
+
+
+API_BASE_URL = _api_base_url()
 
 
 def cmd_analyze(input_path: str, output_path: str) -> int:
