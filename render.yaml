@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sentraguard-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile.api
+    plan: free
+
+  - type: web
+    name: sentraguard-ui
+    runtime: docker
+    dockerfilePath: ./Dockerfile.ui
+    plan: free
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: sentraguard-api
+          property: hostport
